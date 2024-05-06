@@ -27,13 +27,14 @@ unsigned long phase3 = 30000; //30 sec, 60
 unsigned long phase4 = 15000; //15 sec, 72
 unsigned long phase6 = 240000; //4 min
 unsigned long oneCycle = 240000;
+unsigned long pidInterval = 5000; //5 sec for now
 int cycleCount = 0;
 
 PID myPID(&difference, &driverOut, &setPoint,Kp,Ki,Kd, DIRECT);
 void setup() {
   // put your setup code here, to run once:
   myPID.SetMode(AUTOMATIC);
-  attachInterrupt(23, calculate, CHANGE);
+  //attachInterrupt(23, calculate, CHANGE);
   //8 pwm, 7 tacho, 27 5v
   pinMode(HEAT, OUTPUT); //Heat
   pinMode(COOL, OUTPUT); //Cool
@@ -111,6 +112,10 @@ void tempCurve()
       } else {
         break;
       }
+      if (millis() - currentTime >= pidInterval) {
+        calculate();  
+        currentTime = millis();  
+    }
     }
     cycleCount++;
   }
