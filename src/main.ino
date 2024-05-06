@@ -31,15 +31,18 @@ void setup() {
 void control() {
   //noInterrupts();
   //get temp data
-  interrupts();
-  tempError = currentTemp - targetTemp;
-  currentTime = millis();
-  difference = currentTime - prevTime;
-  prevTime = currentTime;
+  //interrupts();
+  
   myPID.Compute();
   digitalWrite(5, driverOut);
 };
 
+void calculate() {
+  tempError = currentTemp - targetTemp;
+  currentTime = millis();
+  difference = currentTime - prevTime;
+  prevTime = currentTime;
+}
 //attachInterrupt();
 // void loop() {
 //   // put your main code here, to run repeatedly:
