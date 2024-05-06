@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <PID_v1.h>
 #include <PID_v1.h>
+#include <Wire.h>
 double driverOut = 10;
 double difference = 10;
 double setPoint = 10;
@@ -29,6 +30,7 @@ unsigned long phase6 = 240000; //4 min
 unsigned long oneCycle = 240000;
 unsigned long pidInterval = 5000; //5 sec for now
 int cycleCount = 0;
+int tempSensorAddress;
 
 PID myPID(&difference, &driverOut, &setPoint,Kp,Ki,Kd, DIRECT);
 void setup() {
@@ -50,15 +52,20 @@ void loop() {
   //figure out what sampling rate would be best
   delay(1000);  //delay for 1 sec
 }
-void control() {
-  //noInterrupts();
-  //get temp data
-  //interrupts();
+// void control() {
+//   //noInterrupts();
+//   //get temp data
+//   //interrupts();
   
-};
+// };
 
 double getTemp() {
   //code to get temp reading 
+  Wire.beginTransmission(tempSensorAddress); //need to figure out temp sesnor address
+  Wire.requestFrom(tempSensorAddress, 2); //how many bytes of data needed?
+  if(Wire.available()) {
+    int tempData = Wire.read();
+  }
 }
 void updateTemp() {
   if (driverOut > 0) {
