@@ -96,11 +96,11 @@ void updateTemp() {
 }
 
 void calculate() {
-  tempError = currentTemp - targetTemp;
-  currentTime = millis();
-  difference = currentTime - prevTime;
-  prevTime = currentTime;
-  currentTemp = getTemp();
+  // tempError = currentTemp - targetTemp;
+  // currentTime = millis();
+  // difference = currentTime - prevTime;
+  // prevTime = currentTime;
+  // currentTemp = getTemp();
   myPID.Compute();
   updateTemp();
 }
