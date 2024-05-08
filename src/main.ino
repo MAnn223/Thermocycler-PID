@@ -5,7 +5,7 @@
 #include <TMP1075.h>
 double driverOut = 10;
 double difference = 10;
-double setPoint = 10;
+//double setPoint = 10;
 unsigned long changeTime = 0;
 unsigned long currentTime = millis();
 unsigned long prevTime = millis();
@@ -13,8 +13,8 @@ int Kp = 0.01;
 int Ki = 0.2;
 int Kd = 0.02;
 double tempError;
-double targetTemp;
-double currentTemp;
+double targetTemp = 0;
+double currentTemp = 0;
 const int HEAT = 5;
 const int COOL = 6;
 const int SDA = 23;
@@ -33,7 +33,7 @@ unsigned long pidInterval = 5000; //5 sec for now
 int cycleCount = 0;
 int tempSensorAddress = 0x75;
 
-PID myPID(&difference, &driverOut, &setPoint,Kp,Ki,Kd, DIRECT);
+PID myPID(&currentTemp, &driverOut, &targetTemp,Kp,Ki,Kd, DIRECT);
 void setup() {
   // put your setup code here, to run once:
   myPID.SetMode(AUTOMATIC);
@@ -60,7 +60,7 @@ void loop() {
   
 // };
 
-double getTemp() {
+float getTemp() {
   //code to get temp reading 
   // Wire.beginTransmission(tempSensorAddress); //need to figure out temp sesnor address
   // Wire.requestFrom(tempSensorAddress, 2); //how many bytes of data needed?
@@ -75,21 +75,23 @@ double getTemp() {
   // while(Serial.available()) {
   //   Serial.read();
   // }
-  float tempCData = tmp1075.getTemperatureCelsius();
+  double currentTemp = tmp1075.getTemperatureCelsius();
+  return tmp1075.getTemperatureCelsius();
 }
 void updateTemp() {
+  //only one supports pwm
   if (driverOut > 0) {
     // Turn on heating
-    digitalWrite(HEAT, driverOut);
-    digitalWrite(COOL, 0);
+    digitalWrite(HEAT, HIGH);
+    digitalWrite(COOL, LOW);
   } else if (driverOut < 0) {
     // Turn on cooling
-    digitalWrite(HEAT, 0);
-    digitalWrite(COOL, driverOut);
+    digitalWrite(HEAT, LOW);
+    digitalWrite(COOL, HIGH);
   } else {
     // Turn off 
-    digitalWrite(HEAT, 0);
-    digitalWrite(COOL, 0);
+    digitalWrite(HEAT, LOW);
+    digitalWrite(COOL, LOW);
   }
 }
 
