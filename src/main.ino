@@ -2,6 +2,7 @@
 #include <PID_v1.h>
 #include <PID_v1.h>
 #include <Wire.h>
+#include <TMP1075.h>
 double driverOut = 10;
 double difference = 10;
 double setPoint = 10;
@@ -30,7 +31,7 @@ unsigned long phase6 = 240000; //4 min
 unsigned long oneCycle = 240000;
 unsigned long pidInterval = 5000; //5 sec for now
 int cycleCount = 0;
-int tempSensorAddress;
+int tempSensorAddress = 0x75;
 
 PID myPID(&difference, &driverOut, &setPoint,Kp,Ki,Kd, DIRECT);
 void setup() {
@@ -61,11 +62,20 @@ void loop() {
 
 double getTemp() {
   //code to get temp reading 
-  Wire.beginTransmission(tempSensorAddress); //need to figure out temp sesnor address
-  Wire.requestFrom(tempSensorAddress, 2); //how many bytes of data needed?
-  if(Wire.available()) {
-    int tempData = Wire.read();
-  }
+  // Wire.beginTransmission(tempSensorAddress); //need to figure out temp sesnor address
+  // Wire.requestFrom(tempSensorAddress, 2); //how many bytes of data needed?
+  // if(Wire.available()) {
+  //   int tempData = Wire.read();
+  // }
+  TwoWire tWire = Wire;
+  TMP1075::TMP1075 tmp1075 = TMP1075::TMP1075(tWire);  
+  tWire.begin();
+  tmp1075.begin();
+  //prevent serial buffer overflow
+  // while(Serial.available()) {
+  //   Serial.read();
+  // }
+  float tempCData = tmp1075.getTemperatureCelsius();
 }
 void updateTemp() {
   if (driverOut > 0) {
