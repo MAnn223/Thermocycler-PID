@@ -60,8 +60,8 @@ bool PID::Compute()
    if(!inAuto) return false;
    unsigned long now = millis();
    unsigned long timeChange = (now - lastTime);
-   if(timeChange>=SampleTime)
-   {
+   // if(timeChange>=SampleTime)
+   // {
       /*Compute all the working error variables*/
       double input = *myInput;
       double error = *mySetpoint - input;
@@ -90,8 +90,8 @@ bool PID::Compute()
       lastInput = input;
       lastTime = now;
 	    return true;
-   }
-   else return false;
+   // }
+   //else return false;
 }
 
 /* SetTunings(...)*************************************************************
