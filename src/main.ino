@@ -29,7 +29,7 @@ unsigned long phase3 = 30000; //30 sec, 60
 unsigned long phase4 = 15000; //15 sec, 72
 unsigned long phase6 = 240000; //4 min
 unsigned long oneCycle = 240000;
-unsigned long pidInterval = 5000; //5 sec for now
+unsigned long pidInterval = 5000; //figure out what sampling rate would be best
 int cycleCount = 0;
 int tempSensorAddress = 0x75;
 
@@ -48,9 +48,34 @@ void setup() {
   Serial.begin(9600);
 
 }
+void tempCurve() 
+{
+  
+  for(int i = 0; i <30; i++) {
+    unsigned long currentTime = millis();
+    while (currentTemp < oneCycle) {
+      if(currentTime < phase12) {
+        targetTemp = 95;
+      }
+      else if (currentTime < phase12 + phase3) {
+        targetTemp = 60;
+      }
+      else if (currentTime < phase12 + phase3 + phase4) {
+        targetTemp = 72;
+      } else {
+        break;
+      }
+      if (millis() - currentTime >= pidInterval) {
+        calculate();  
+        currentTime = millis();  
+    }
+    }
+    cycleCount++;
+  }
+
+}
 void loop() {
   tempCurve();
-  //figure out what sampling rate would be best
   delay(1000);  //delay for 1 sec
 }
 // void control() {
@@ -105,6 +130,7 @@ void calculate() {
   updateTemp();
 }
 
+
 //functions from simulation code
 void swapModes(int &heatState, int &coolState);
 void onHeat();
@@ -114,32 +140,7 @@ void coolDown(int targetTemp);
 void shutDown();
 
 
-void tempCurve() 
-{
-  
-  for(int i = 0; i <30; i++) {
-    unsigned long currentTime = millis();
-    while (currentTemp < oneCycle) {
-      if(currentTime < phase12) {
-        targetTemp = 95;
-      }
-      else if (currentTime < phase12 + phase3) {
-        targetTemp = 60;
-      }
-      else if (currentTime < phase12 + phase3 + phase4) {
-        targetTemp = 72;
-      } else {
-        break;
-      }
-      if (millis() - currentTime >= pidInterval) {
-        calculate();  
-        currentTime = millis();  
-    }
-    }
-    cycleCount++;
-  }
 
-}
 
 
 void swapModes(int &heatState, int &coolState)
